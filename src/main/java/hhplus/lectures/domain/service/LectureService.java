@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,7 +72,6 @@ public class LectureService {
     public LectureHistResponseDto getLectureHist(LectureHistDto dto) throws LectureHistNotFoundException, LectureNotFoundException {
         LectureHistEntity lectureHistEntity = lectureHistRepository.findByUserIdAndLectureOptionOptionId(dto.userId(), dto.optionId())
                 .orElseThrow(() -> new LectureHistNotFoundException());
-
 
         return lectureHistEntity.toLectureHistResponseDto();
     }

@@ -29,9 +29,7 @@ public class LectureHistEntity {
                 .histId(this.histId)
                 .userId(this.userId)
                 .lectureId(this.lectureOption.getLecture().getLectureId())
-                .optionList(this.lectureOption.getLecture().getOptions().stream()
-                        .map(LectureOptionEntity::toDto)
-                        .collect(Collectors.toList()))
+                .optionId(this.lectureOption.getOptionId())
                 .build();
     }
 }
