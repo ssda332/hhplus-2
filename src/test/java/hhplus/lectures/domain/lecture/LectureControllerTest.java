@@ -8,7 +8,7 @@ import hhplus.lectures.exception.LectureNotFoundException;
 import hhplus.lectures.exception.LectureOptionNotFoundException;
 import hhplus.lectures.presentation.controller.LectureController;
 import hhplus.lectures.presentation.dto.LectureApplyDto;
-import hhplus.lectures.presentation.dto.LectureResponseDto;
+import hhplus.lectures.presentation.dto.LectureApplyResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class LectureControllerTest {
                 .optionId(1L)
                 .build();
 
-        LectureResponseDto responseDto = LectureResponseDto.builder()
+        LectureApplyResponseDto responseDto = LectureApplyResponseDto.builder()
                 .userId(1L)
                 .lectureId(1L)
                 .optionId(1L)
@@ -68,11 +68,83 @@ public class LectureControllerTest {
 
         //then
         actions.andDo(print())
-                .andExpect(status().isOk());
-                /*.andExpect(jsonPath("loginId", "conTest1").exists())
-                .andExpect(jsonPath("nickname", "conTest1").exists())
-                .andExpect(jsonPath("authorityDtoSet[0].authorityName").value("ROLE_USER"));*/
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId").value(1L))
+                .andExpect(jsonPath("$.lectureId").value(1L))
+                .andExpect(jsonPath("$.optionId").value(1L));
 
+    }
+
+    @Test
+    @DisplayName("특강 옵션을 찾을 수 없는 경우")
+    public void lectureOptionNotFound() throws Exception, LectureNotFoundException, LectureOptionNotFoundException, ExceededLectureException, AlreadyAppliedException {
+        //given
+        String url = "/lectures/apply";
+        LectureApplyDto dto = LectureApplyDto.builder()
+                .userId(1L)
+                .lectureId(1L)
+                .optionId(1L)
+                .build();
+
+        given(lectureService.applyLecture(any(LectureApplyDto.class))).willThrow(new LectureOptionNotFoundException());
+
+        //when
+        ResultActions actions = mockMvc.perform(post(url)
+                .content(objectMapper.writeValueAsString(dto))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        //then
+        actions.andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("이미 신청한 경우")
+    public void alreadyApplied() throws Exception, LectureNotFoundException, LectureOptionNotFoundException, ExceededLectureException, AlreadyAppliedException {
+        //given
+        String url = "/lectures/apply";
+        LectureApplyDto dto = LectureApplyDto.builder()
+                .userId(1L)
+                .lectureId(1L)
+                .optionId(1L)
+                .build();
+
+        given(lectureService.applyLecture(any(LectureApplyDto.class))).willThrow(new AlreadyAppliedException());
+
+        //when
+        ResultActions actions = mockMvc.perform(post(url)
+                .content(objectMapper.writeValueAsString(dto))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        //then
+        actions.andDo(print())
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    @DisplayName("신청 가능 인원을 초과한 경우")
+    public void exceededLecture() throws Exception, LectureNotFoundException, LectureOptionNotFoundException, ExceededLectureException, AlreadyAppliedException {
+        //given
+        String url = "/lectures/apply";
+        LectureApplyDto dto = LectureApplyDto.builder()
+                .userId(1L)
+                .lectureId(1L)
+                .optionId(1L)
+                .build();
+
+        given(lectureService.applyLecture(any(LectureApplyDto.class))).willThrow(new ExceededLectureException());
+
+        //when
+        ResultActions actions = mockMvc.perform(post(url)
+                .content(objectMapper.writeValueAsString(dto))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        //then
+        actions.andDo(print())
+                .andExpect(status().isConflict());
     }
 
 }

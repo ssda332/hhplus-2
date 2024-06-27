@@ -6,13 +6,10 @@ import hhplus.lectures.datasource.entity.LectureOptionEntity;
 import hhplus.lectures.domain.repository.LectureHistRepository;
 import hhplus.lectures.domain.repository.LectureRepository;
 import hhplus.lectures.domain.service.LectureService;
-import hhplus.lectures.exception.AlreadyAppliedException;
-import hhplus.lectures.exception.ExceededLectureException;
-import hhplus.lectures.exception.LectureNotFoundException;
-import hhplus.lectures.exception.LectureOptionNotFoundException;
+import hhplus.lectures.exception.*;
 import hhplus.lectures.presentation.dto.LectureApplyDto;
-import hhplus.lectures.presentation.dto.LectureResponseDto;
-import org.assertj.core.api.Assertions;
+import hhplus.lectures.presentation.dto.LectureApplyResponseDto;
+import hhplus.lectures.presentation.dto.LectureHistDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -81,7 +78,7 @@ public class LectureServiceTest {
         given(lectureHistRepository.applyLecture(any(LectureHistEntity.class))).willReturn(lectureHistEntity);
 
         // when
-        LectureResponseDto responseDto = lectureService.applyLecture(dto);
+        LectureApplyResponseDto responseDto = lectureService.applyLecture(dto);
 
         // then
         assertThat(responseDto.userId()).isEqualTo(userId);
@@ -215,5 +212,23 @@ public class LectureServiceTest {
         }).isInstanceOf(ExceededLectureException.class);
     }
 
+    @Test
+    @DisplayName("수강 신청 내역이 없는 경우")
+    void getLectureHistNotFound() {
+        // given
+        Long userId = 1L;
+        Long lectureId = 1L;
+        Long optionId = 1L;
+        LectureHistDto dto = LectureHistDto.builder()
+                .userId(userId)
+                .lectureId(lectureId)
+                .optionId(optionId)
+                .build();
 
+        given(lectureHistRepository.findByUserIdAndLectureOptionOptionId(userId, optionId)).willReturn(Optional.empty());
+
+        // when, then
+        assertThatThrownBy(() -> lectureService.getLectureHist(dto))
+                .isInstanceOf(LectureHistNotFoundException.class);
+    }
 }
