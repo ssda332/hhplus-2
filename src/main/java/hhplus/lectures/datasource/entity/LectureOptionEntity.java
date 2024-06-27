@@ -1,5 +1,6 @@
 package hhplus.lectures.datasource.entity;
 
+import hhplus.lectures.exception.ExceededLectureException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,4 +22,12 @@ public class LectureOptionEntity {
 
     private Long maxNumber;
     private Long applyNumber;
+
+    // 신청 메소드 추가
+    public void enroll() throws ExceededLectureException {
+        if (applyNumber >= maxNumber) {
+            throw new ExceededLectureException();
+        }
+        applyNumber++;
+    }
 }
