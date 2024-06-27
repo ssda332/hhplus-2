@@ -10,9 +10,14 @@ import hhplus.lectures.exception.ExceededLectureException;
 import hhplus.lectures.exception.LectureNotFoundException;
 import hhplus.lectures.exception.LectureOptionNotFoundException;
 import hhplus.lectures.presentation.dto.LectureApplyDto;
+import hhplus.lectures.presentation.dto.LectureApplyResponseDto;
+import hhplus.lectures.presentation.dto.LectureOptionDto;
 import hhplus.lectures.presentation.dto.LectureResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +26,7 @@ public class LectureService {
     private final LectureHistRepository lectureHistRepository;
     private final LectureRepository lectureRepository;
 
-    public LectureResponseDto applyLecture(LectureApplyDto dto) throws LectureNotFoundException, LectureOptionNotFoundException, ExceededLectureException, AlreadyAppliedException {
+    public LectureApplyResponseDto applyLecture(LectureApplyDto dto) throws LectureNotFoundException, LectureOptionNotFoundException, ExceededLectureException, AlreadyAppliedException {
 
         Long optionId = dto.optionId();
         Long lectureId = dto.lectureId();
@@ -55,7 +60,7 @@ public class LectureService {
 
         LectureHistEntity lectureHistEntity = lectureHistRepository.applyLecture(histEntity);
 
-        LectureResponseDto responseDto = LectureResponseDto.builder()
+        LectureApplyResponseDto responseDto = LectureApplyResponseDto.builder()
                 .userId(lectureHistEntity.getUserId())
                 .lectureId(lectureEntity.getLectureId())
                 .optionId(option.getOptionId())
@@ -63,4 +68,12 @@ public class LectureService {
 
         return responseDto;
     }
+
+    public List<LectureResponseDto> selectLectureList() {
+        return lectureRepository.findAll().stream()
+                .map(LectureEntity::toDto)
+                .collect(Collectors.toList());
+    }
+
+
 }

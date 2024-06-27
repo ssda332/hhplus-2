@@ -5,6 +5,7 @@ import hhplus.lectures.domain.repository.LectureRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,5 +22,10 @@ public class LectureRepositoryImpl implements LectureRepository {
     @Override
     public LectureEntity save(LectureEntity lecture) {
         return lectureJpaRepository.save(lecture);
+    }
+
+    @Override
+    public List<LectureEntity> findAll() {
+        return lectureJpaRepository.findAll();
     }
 }

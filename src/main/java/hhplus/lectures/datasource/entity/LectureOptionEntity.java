@@ -1,6 +1,7 @@
 package hhplus.lectures.datasource.entity;
 
 import hhplus.lectures.exception.ExceededLectureException;
+import hhplus.lectures.presentation.dto.LectureOptionDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,5 +30,13 @@ public class LectureOptionEntity {
             throw new ExceededLectureException();
         }
         applyNumber++;
+    }
+
+    public LectureOptionDto toDto() {
+        return LectureOptionDto.builder()
+                .optionId(this.optionId)
+                .maxNumber(this.maxNumber)
+                .applyNumber(this.applyNumber)
+                .build();
     }
 }

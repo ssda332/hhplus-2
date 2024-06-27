@@ -1,10 +1,12 @@
 package hhplus.lectures.datasource.entity;
 
 import hhplus.lectures.exception.LectureOptionNotFoundException;
+import hhplus.lectures.presentation.dto.LectureResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "LECTURE")
@@ -33,5 +35,14 @@ public class LectureEntity {
 
         if (result == null) throw new LectureOptionNotFoundException();
         return result;
+    }
+
+    public LectureResponseDto toDto() {
+        return LectureResponseDto.builder()
+                .lectureId(this.lectureId)
+                .optionList(this.options.stream()
+                        .map(LectureOptionEntity::toDto)
+                        .collect(Collectors.toList()))
+                .build();
     }
 }
