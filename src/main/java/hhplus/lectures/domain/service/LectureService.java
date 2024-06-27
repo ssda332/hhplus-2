@@ -5,18 +5,13 @@ import hhplus.lectures.datasource.entity.LectureHistEntity;
 import hhplus.lectures.datasource.entity.LectureOptionEntity;
 import hhplus.lectures.domain.repository.LectureHistRepository;
 import hhplus.lectures.domain.repository.LectureRepository;
-import hhplus.lectures.exception.AlreadyAppliedException;
-import hhplus.lectures.exception.ExceededLectureException;
-import hhplus.lectures.exception.LectureNotFoundException;
-import hhplus.lectures.exception.LectureOptionNotFoundException;
-import hhplus.lectures.presentation.dto.LectureApplyDto;
-import hhplus.lectures.presentation.dto.LectureApplyResponseDto;
-import hhplus.lectures.presentation.dto.LectureOptionDto;
-import hhplus.lectures.presentation.dto.LectureResponseDto;
+import hhplus.lectures.exception.*;
+import hhplus.lectures.presentation.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,5 +70,11 @@ public class LectureService {
                 .collect(Collectors.toList());
     }
 
+    public LectureHistResponseDto getLectureHist(LectureHistDto dto) throws LectureHistNotFoundException, LectureNotFoundException {
+        LectureHistEntity lectureHistEntity = lectureHistRepository.findByUserIdAndLectureOptionOptionId(dto.userId(), dto.optionId())
+                .orElseThrow(() -> new LectureHistNotFoundException());
 
+
+        return lectureHistEntity.toLectureHistResponseDto();
+    }
 }

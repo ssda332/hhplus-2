@@ -5,6 +5,7 @@ import hhplus.lectures.domain.repository.LectureHistRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -22,4 +23,5 @@ public class LectureHistRepositoryImpl implements LectureHistRepository {
     public Optional<LectureHistEntity> findByUserIdAndLectureOptionOptionId(Long userId, Long optionId) {
         return lectureHistJpaRepository.findByUserIdAndLectureOptionOptionId(userId, optionId);
     }
+
 }

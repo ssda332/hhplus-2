@@ -45,4 +45,13 @@ public class LectureEntity {
                         .collect(Collectors.toList()))
                 .build();
     }
+
+    public LectureResponseDto toLectureResponseDto() {
+        return LectureResponseDto.builder()
+                .lectureId(this.lectureId)
+                .optionList(this.options.stream()
+                        .map(LectureOptionEntity::toDto)
+                        .collect(Collectors.toList()))
+                .build();
+    }
 }

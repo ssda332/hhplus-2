@@ -27,4 +27,8 @@ class ApiControllerAdvice extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(409).body(new ErrorResponse("409", "특강 수강 신청 인원이 다 찼습니다."));
     }
 
+    @ExceptionHandler(value = LectureHistNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleLectureHistNotFoundException(Exception e) {
+        return ResponseEntity.status(409).body(new ErrorResponse("404", "특강 신청 이력이 존재하지 않습니다."));
+    }
 }
